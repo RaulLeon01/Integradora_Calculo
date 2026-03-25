@@ -1,0 +1,47 @@
+<div class="tutorial-backdrop hidden" id="tutorialModal" aria-hidden="true">
+    <section class="tutorial-modal" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+        <div class="tutorial-modal__header">
+            <div>
+                <p class="eyebrow">Guía rápida</p>
+                <h2 id="tutorialTitle">Cómo usar el programa</h2>
+            </div>
+            <button type="button" class="icon-button" id="closeTutorialButton" aria-label="Cerrar tutorial">×</button>
+        </div>
+
+        <div class="tutorial-steps">
+            <article class="tutorial-step">
+                <span>1</span>
+                <div>
+                    <h3>Escribe la ecuación</h3>
+                    <p>Usa formatos como <code>y' + 2y = 0</code> o <code>y'' + 3y' + 2y = 0</code>.</p>
+                </div>
+            </article>
+            <article class="tutorial-step">
+                <span>2</span>
+                <div>
+                    <h3>Agrega condiciones iniciales</h3>
+                    <p>Captura <code>y(0)</code> y, si es de segundo orden, también <code>y'(0)</code>.</p>
+                </div>
+            </article>
+            <article class="tutorial-step">
+                <span>3</span>
+                <div>
+                    <h3>Resuelve</h3>
+                    <p>El sistema mostrará la transformada, $Y(s)$, la solución final y su gráfica.</p>
+                </div>
+            </article>
+            <article class="tutorial-step">
+                <span>4</span>
+                <div>
+                    <h3>Opcional: activa Modo IA</h3>
+                    <p>Si configuras tu API key, podrás pedir una explicación más guiada del resultado.</p>
+                </div>
+            </article>
+        </div>
+
+        <div class="tutorial-modal__footer">
+            <button class="btn btn--ghost" id="skipTutorialButton" type="button">Omitir tutorial</button>
+            <button class="btn" id="finishTutorialButton" type="button">Entendido</button>
+        </div>
+    </section>
+</div>

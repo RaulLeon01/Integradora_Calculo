@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}UTEZ · Solver Laplace{% endblock %}
+
+{% block content %}
+<section class="panel panel--form">
+    <div class="panel__header">
+        <div>
+            <p class="eyebrow">Entrada del sistema</p>
+            <h2>Captura del problema</h2>
+        </div>
+        <div class="badge-group">
+            <span class="badge">Primer orden</span>
+            <span class="badge">Segundo orden</span>
+            <span class="badge">Web + Flask</span>
+        </div>
+    </div>
+
+    <form method="post" id="solverForm" class="solver-form" novalidate>
+        <div class="form-group">
+            <label for="equation">Ecuación diferencial</label>
+            <textarea id="equation" name="equation" rows="3" placeholder="Ejemplo: y'' + 3y' + 2y = 0" required>{{ form_data.equation }}</textarea>
+            <small>Acepta expresiones como <code>e^t</code>, <code>sin(t)</code>, <code>cos(t)</code> y <code>exp(t)</code>.</small>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="y0">Condición inicial y(0)</label>
+                <input id="y0" name="y0" type="text" placeholder="Ejemplo: 1" value="{{ form_data.y0 }}" required>
+            </div>
+            <div class="form-group">
+                <label for="y1">Condición inicial y'(0)</label>
+                <input id="y1" name="y1" type="text" placeholder="Solo si es de segundo orden" value="{{ form_data.y1 }}">
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <label class="switch">
+                <input type="checkbox" id="aiModeToggle" name="ai_mode" {% if form_data.ai_mode %}checked{% endif %}>
+                <span class="switch__slider"></span>
+                <span class="switch__label">Modo IA</span>
+            </label>
+            <div class="toolbar__buttons">
+                <button class="btn btn--ghost" type="button" id="clearButton">Borrar contenido</button>
+                <button class="btn" type="submit">Resolver ecuación</button>
+            </div>
+        </div>
+
+        <div class="helper-note {% if ai_available %}helper-note--success{% endif %}">
+            {% if ai_available %}
+                Modo IA disponible. La API key está configurada en el servidor.
+            {% else %}
+                Modo IA listo para conectarse. Solo falta configurar <code>OPENAI_API_KEY</code> en tu servidor.
+            {% endif %}
+        </div>
+    </form>
+
+    <section class="examples">
+        <h3>Casos de prueba sugeridos por la tarea</h3>
+        <div class="examples__grid">
+            <button class="example-card" type="button" data-example-equation="y' + 2y = 0" data-example-y0="1" data-example-y1="">
+                <strong>1.</strong>
+                <span>y' + 2y = 0</span>
+                <small>y(0) = 1</small>
+            </button>
+            <button class="example-card" type="button" data-example-equation="y'' + 3y' + 2y = 0" data-example-y0="0" data-example-y1="1">
+                <strong>2.</strong>
+                <span>y'' + 3y' + 2y = 0</span>
+                <small>y(0) = 0, y'(0) = 1</small>
+            </button>
+            <button class="example-card" type="button" data-example-equation="y' - y = e^t" data-example-y0="1" data-example-y1="">
+                <strong>3.</strong>
+                <span>y' - y = e^t</span>
+                <small>y(0) = 1</small>
+            </button>
+            <button class="example-card" type="button" data-example-equation="y'' + y = sin(t)" data-example-y0="0" data-example-y1="0">
+                <strong>4.</strong>
+                <span>y'' + y = sin(t)</span>
+                <small>y(0) = 0, y'(0) = 0</small>
+            </button>
+        </div>
+    </section>
+</section>
+
+<section class="panel panel--results">
+    <div class="panel__header">
+        <div>
+            <p class="eyebrow">Salida del sistema</p>
+            <h2>Resultados</h2>
+        </div>
+    </div>
+
+    {% if error %}
+        <div class="alert alert--error">{{ error }}</div>
+    {% endif %}
+
+    {% if result %}
+        <div class="results-grid">
+            <article class="result-card">
+                <h3>Ecuación normalizada</h3>
+                <div class="math-block">\[ {{ result.equation_latex }} \]</div>
+                <div class="math-list">
+                    {% for item in result.conditions_latex %}
+                        <div class="math-block math-block--compact">\( {{ item }} \)</div>
+                    {% endfor %}
+                </div>
+            </article>
+
+            <article class="result-card">
+                <h3>Transformada de Laplace</h3>
+                <div class="math-block">\[ {{ result.transform_latex }} \]</div>
+            </article>
+
+            <article class="result-card">
+                <h3>Solución en el dominio de Laplace</h3>
+                <div class="math-block">\[ {{ result.ys_latex }} \]</div>
+            </article>
+
+            <article class="result-card">
+                <h3>Solución final</h3>
+                <div class="math-block">\[ {{ result.solution_latex }} \]</div>
+            </article>
+        </div>
+
+        <article class="result-card result-card--full">
+            <h3>Gráfica de la solución</h3>
+            <img class="plot-image" src="data:image/png;base64,{{ result.plot_base64 }}" alt="Gráfica de la solución">
+        </article>
+
+        <article class="result-card result-card--full">
+            <div class="result-card__row">
+                <div>
+                    <h3>Asistente del Modo IA</h3>
+                    <p>Genera una explicación más guiada del resultado usando la API de OpenAI desde el servidor.</p>
+                </div>
+                <button class="btn" type="button" id="askAiButton" {% if not ai_available %}disabled{% endif %}>Generar explicación IA</button>
+            </div>
+            <div id="aiResponse" class="ai-response">
+                {% if not ai_available %}
+                    <p>Configura la variable <code>OPENAI_API_KEY</code> para habilitar esta función.</p>
+                {% else %}
+                    <p>Activa el Modo IA y usa este botón para obtener una explicación complementaria.</p>
+                {% endif %}
+            </div>
+        </article>
+
+        <script id="aiContextData" type="application/json">{{ result.ai_context | tojson }}</script>
+    {% else %}
+        <div class="empty-state">
+            <h3>Aquí aparecerán los resultados</h3>
+            <p>Cuando resuelvas una ecuación verás la transformada, $Y(s)$, la solución final y su gráfica.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

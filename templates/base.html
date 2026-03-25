@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UTEZ Laplace Solver{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+    {% include '_tutorial.html' %}
+
+    <header class="hero">
+        <div class="hero__overlay"></div>
+        <div class="container hero__content">
+            <div class="brand-card">
+                <img src="{{ url_for('static', filename='img/logo_UTEZ.png') }}" alt="Logo UTEZ" class="brand-card__logo">
+                <div>
+                    <p class="eyebrow">Proyecto web en Python</p>
+                    <h1>Resolución de Ecuaciones Diferenciales con Transformada de Laplace</h1>
+                    <p class="hero__description">
+                        Interfaz amigable para capturar ecuaciones de primer y segundo orden, aplicar Laplace,
+                        obtener $Y(s)$, calcular la solución final y generar la gráfica automáticamente.
+                    </p>
+                </div>
+            </div>
+
+            <div class="hero__actions">
+                <button id="openTutorialButton" class="btn btn--secondary" type="button">Ver tutorial</button>
+                <label class="switch switch--header">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="switch__slider"></span>
+                    <span class="switch__label">Modo oscuro</span>
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-layout">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer container">
+        <div class="footer__credits">
+            <h3>Créditos</h3>
+            <p>Raúl Corcino León · Andrés Hernández Popoca · Bryan Venegas Sánchez · Alejandro Castelar Hernández · Oscar Rosales García</p>
+        </div>
+        <p class="footer__note">Diseño visual inspirado en los colores institucionales y el logo proporcionado por UTEZ.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
