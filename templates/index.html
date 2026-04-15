@@ -34,11 +34,13 @@
             </div>
         </div>
 
-        <div class="toolbar">
+
+        <!--<div class="toolbar">
             <label class="switch">
                 <input type="checkbox" id="aiModeToggle" name="ai_mode" {% if form_data.ai_mode %}checked{% endif %}>
                 <span class="switch__slider"></span>
-                <span class="switch__label">Modo IA</span>
+            <span class="switch__label">Modo IA</span>-->
+
             </label>
             <div class="toolbar__buttons">
                 <button class="btn btn--ghost" type="button" id="clearButton">Borrar contenido</button>
@@ -46,13 +48,14 @@
             </div>
         </div>
 
-        <div class="helper-note {% if ai_available %}helper-note--success{% endif %}">
+
+        <!--<div class="helper-note {% if ai_available %}helper-note--success{% endif %}">
             {% if ai_available %}
                 Modo IA disponible. La API key está configurada en el servidor.
             {% else %}
                 Modo IA listo para conectarse. Solo falta configurar <code>OPENAI_API_KEY</code> en tu servidor.
             {% endif %}
-        </div>
+        </div>-->
     </form>
 
     <section class="examples">
@@ -126,7 +129,7 @@
             <h3>Gráfica de la solución</h3>
             <img class="plot-image" src="data:image/png;base64,{{ result.plot_base64 }}" alt="Gráfica de la solución">
         </article>
-
+<!--
         <article class="result-card result-card--full">
             <div class="result-card__row">
                 <div>
@@ -143,7 +146,7 @@
                 {% endif %}
             </div>
         </article>
-
+-->
         <script id="aiContextData" type="application/json">{{ result.ai_context | tojson }}</script>
     {% else %}
         <div class="empty-state">
